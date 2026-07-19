@@ -1,0 +1,26 @@
+name: Exotic
+version: '1.0.0'
+main: com.exotic.plugin.ExoticPlugin
+api-version: '1.21'
+author: You
+description: 8-12 exotic swords unlocked through operator-issued trials.
+
+commands:
+  exotic:
+    description: Main Exotic command.
+    usage: |
+      /exotic trial <swordId> <player>  - Start a trial for a player
+      /exotic complete <player>          - Manually complete a MANUAL-type trial
+      /exotic cancel <player>            - Cancel a player's active trial
+      /exotic give <swordId> <player>    - Directly give a sword (admin bypass)
+      /exotic list                       - List all configured sword IDs
+    permission: exotic.admin
+    aliases: [ex]
+
+permissions:
+  exotic.admin:
+    description: Allows starting/managing sword trials.
+    default: op
+  exotic.use:
+    description: Allows using exotic sword abilities.
+    default: true
