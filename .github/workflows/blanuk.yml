@@ -1,0 +1,38 @@
+name: Organize Maven Structure
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  organize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sort .java files into src/main/java by their package declaration
+        run: |
+          shopt -s globstar nullglob
+          for f in **/*.java; do
+            case "$f" in
+              src/main/java/*) continue ;;
+            esac
+
+            pkg=$(grep -m1 '^package ' "$f" | sed 's/package //; s/;//' | tr -d '[:space:]')
+            if [ -z "$pkg" ]; then
+              dest="src/main/java/$(basename "$f")"
+            else
+              pkgpath=$(echo "$pkg" | tr '.' '/')
+              dest="src/main/java/$pkgpath/$(basename "$f")"
+            fi
+
+            mkdir -p "$(dirname "$dest")"
+            if [ "$f" != "$dest" ]; then
+              git mv -f "$f" "$dest" 2>/dev/null || mv -f "$f" "$dest"
+              echo "Moved $f -> $dest"
